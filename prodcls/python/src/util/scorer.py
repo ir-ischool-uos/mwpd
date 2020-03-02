@@ -25,7 +25,7 @@ def read_gold_standard(in_file):
     return data[:,5],data[:,6],data[:,7]
 
 def score(prediction:list, gs:list):
-    return precision_recall_fscore_support(gs,prediction, average='weighted')
+    return precision_recall_fscore_support(gs,prediction, average='macro')
 
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
 import csv, fasttext, numpy, re, sys
 
-from sklearn.preprocessing import LabelBinarizer
 from util import data_io as dio
 from nltk import WordNetLemmatizer
 from util import scorer
@@ -38,18 +37,24 @@ def fit_fasttextt(training_data_json, validation_data_json, class_lvl: int,
         print("Not supported")
         exit(1)
 
+    #load data and apply light normalisation of the text before using embeddings
     train=numpy.array(dio.read_json(training_data_json))
+    for row in train:
+        text = row[1]
+        words = tokenize(text)
+        text = " ".join(words).strip()
+        row[1]=text
+
     val=numpy.array(dio.read_json(validation_data_json))
+    for row in val:
+        text = row[1]
+        words = tokenize(text)
+        text = " ".join(words).strip()
+        row[1]=text
 
     X_train=train[:, 1] #use product name only
     y_train = train[:, class_lvl]
 
-    # y_int = encoder.fit_transform(y)
-    # y_label_lookup = dict()
-    # y_label_lookup_inverse = dict()
-    # for index, l in zip(y_int.argmax(1), y):
-    #     y_label_lookup[index] = l
-    #     y_label_lookup_inverse[l] = index
 
     X_test = val[:,1]
     y_test = val[:,class_lvl]
@@ -88,26 +93,27 @@ if __name__ == "__main__":
     training_data_json=sys.argv[1]
     validation_data_json = sys.argv[2]
     temporary_folder = sys.argv[3]
+    embedding="/home/zz/Work/data/embeddings/wop/w2v_desc_cbow.txt"
 
     sum_p = 0.0
     sum_r = 0.0
     sum_f1 = 0.0
     #lvl1
-    p, r, f1, support=fit_fasttextt(training_data_json, validation_data_json,1, temporary_folder, None)
+    p, r, f1, support=fit_fasttextt(training_data_json, validation_data_json,1, temporary_folder, embedding)
     print("Lvl1 P={} R={} F1={}".format(p, r, f1))
     sum_p += p
     sum_r += r
     sum_f1 += f1
 
     # lvl2
-    p, r, f1, support = fit_fasttextt(training_data_json, validation_data_json, 2, temporary_folder, None)
+    p, r, f1, support = fit_fasttextt(training_data_json, validation_data_json, 2, temporary_folder, embedding)
     print("Lvl2 P={} R={} F1={}".format(p, r, f1))
     sum_p += p
     sum_r += r
     sum_f1 += f1
 
     # lvl3
-    p, r, f1, support = fit_fasttextt(training_data_json, validation_data_json, 3, temporary_folder, None)
+    p, r, f1, support = fit_fasttextt(training_data_json, validation_data_json, 3, temporary_folder, embedding)
     print("Lvl3 P={} R={} F1={}".format(p, r, f1))
     sum_p += p
     sum_r += r
