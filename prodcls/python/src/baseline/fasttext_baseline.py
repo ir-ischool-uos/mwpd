@@ -93,7 +93,7 @@ if __name__ == "__main__":
     training_data_json=sys.argv[1]
     validation_data_json = sys.argv[2]
     temporary_folder = sys.argv[3]
-    embedding="/home/zz/Work/data/embeddings/wop/w2v_desc_cbow.txt"
+    embedding=sys.argv[4]
 
     sum_p = 0.0
     sum_r = 0.0
