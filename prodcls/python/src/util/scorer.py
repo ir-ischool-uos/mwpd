@@ -14,7 +14,7 @@ def read_prediction(in_file, format):
         data= numpy.array(dio.read_json(in_file))
         return data[:, 5], data[:, 6], data[:, 7]
     elif format=='csv':
-        data= dio.read_json(in_file)
+        data= dio.read_csv(in_file)
         return data[:, 1], data[:, 2], data[:, 3]
     else:
         print("Not supported input format")
@@ -50,12 +50,12 @@ if __name__ == "__main__":
     sum_p+=p
     sum_r+=r
     sum_f1+=f1
-    p, r, f1, support = score(pred_lvl2, gs_lvl2)
+    p, r, f1, support = score(list(pred_lvl2), list(gs_lvl2))
     print("Lvl2 P={} R={} F1={}".format(p,r,f1))
     sum_p += p
     sum_r += r
     sum_f1 += f1
-    p, r, f1, support = score(pred_lvl3, gs_lvl3)
+    p, r, f1, support = score(list(pred_lvl3), list(gs_lvl3))
     print("Lvl3 P={} R={} F1={}".format(p, r, f1))
     sum_p += p
     sum_r += r

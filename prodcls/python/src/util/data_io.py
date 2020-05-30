@@ -1,6 +1,7 @@
 import json
 import operator
 import pandas as pd
+import sys
 
 ''''
 This method reads the json data file (train/val/test) and save them as a matrix where each row is an instance with the following columns:
@@ -27,6 +28,24 @@ def read_json(in_file):
     return matrix
 
 
+'''
+Utility method to remove labels from GS datasets (must conform to the json format)
+'''
+def remove_labels_json(in_file, out_file):
+    f = open(out_file, "w")
+    with open(in_file) as file:
+        line = file.readline()
+
+        while line is not None and len(line)>0:
+            js=json.loads(line)
+            del js['lvl1']
+            del js['lvl2']
+            del js['lvl3']
+            f.write(json.dumps(js)+"\n")
+            line = file.readline()
+    f.close()
+
+
 ''''
 This method reads the test data output file CSV and save them as a matrix where each row is an instance with the following columns:
 - 0: id
@@ -36,7 +55,8 @@ This method reads the test data output file CSV and save them as a matrix where 
 '''
 def read_csv(in_file):
     df = pd.read_csv(in_file, header=None, delimiter=',', quoting=0, encoding="utf-8")
-    return df.as_matrix()
+    df=df.fillna('None')
+    return df.to_numpy()
 
 '''
 output a matrix in the above format to json
@@ -68,3 +88,7 @@ def write_json(matrix, out_file):
         print("lvl3 class {}={}".format(t[0],t[1]))
     print("\n")
 
+
+if __name__ == "__main__":
+    remove_labels_json(sys.argv[1],
+                       sys.argv[2])

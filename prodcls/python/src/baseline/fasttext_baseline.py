@@ -26,7 +26,7 @@ def tokenize(text):
 def fit_fasttextt(training_data_json, validation_data_json, class_lvl: int,
                          tmp_folder: str,
                          embedding_file: str):
-
+    class_level=class_lvl
     if class_lvl==1:
         class_lvl=5
     elif class_lvl==2:
@@ -86,6 +86,11 @@ def fit_fasttextt(training_data_json, validation_data_json, class_lvl: int,
                                           dim=300)
     # evaluate the model
     predictions = model.predict(list(X_test))[0]
+    f=open(tmp_folder+"/"+str(class_level)+"_predictions.txt",'w')
+    for p in predictions:
+        pred=p[0][9:].replace("|"," ")
+        f.write(pred+"\n")
+    f.close()
 
     return scorer.score(predictions, list(y_test))
 
@@ -93,7 +98,11 @@ if __name__ == "__main__":
     training_data_json=sys.argv[1]
     validation_data_json = sys.argv[2]
     temporary_folder = sys.argv[3]
-    embedding=sys.argv[4]
+
+    if len(sys.argv)>4:
+        embedding=sys.argv[4]
+    else:
+        embedding=None
 
     sum_p = 0.0
     sum_r = 0.0
